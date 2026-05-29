@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Foodgy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            background: var(--dark-bg, #0f0f0f);
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.2rem;
+            color: #f5f5f5;
+        }
+
+        .dashboard-header p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8555 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f5f5f5;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-card {
+            background: var(--dark-card, #161616);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            border-color: #FF6B35;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF6B35 0%, #FFB366 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            color: #f5f5f5;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .card-value {
+            color: #FF6B35;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .card-desc {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-link {
+            color: #FF6B35;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .card-link:hover {
+            color: #FFB366;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #f5f5f5;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .orders-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .order-item {
+            background: var(--dark-card, #161616);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .order-item:hover {
+            border-color: #FF6B35;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
+        }
+
+        .order-info h3 {
+            color: #f5f5f5;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-info p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+        }
+
+        .status-delivered {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .status-cancelled {
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #a0a0a0;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #404040;
+            margin-bottom: 1rem;
+        }
+
+        .profile-section {
+            background: var(--dark-card, #161616);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35 0%, #FFB366 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .profile-info h2 {
+            color: #f5f5f5;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-info p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FF6B35;
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-status {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body style="background: var(--dark-bg, #0f0f0f);">
+    <!-- Header with Navigation -->
+    <header style="background: rgba(22, 22, 22, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.08); position: sticky; top: 0; z-index: 100;">
+        <nav class="navbar flex between wrapper">
+            <a href="index.html" class="logo">Foodgy.</a>
+
+            <ul class="navlist flex gap-3">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="dashboard.html" style="color: #FF6B35;">Dashboard</a></li>
+                <li><a href="order-history.html">Orders</a></li>
+            </ul>
+
+            <div class="desktop-action flex gap-2">
+                <div id="profileDropdown" class="profile-dropdown">
+                    <button id="profileBtn" class="btn profile-btn">
+                        User <i class="fa-solid fa-caret-down"></i>
+                    </button>
+                    <div class="profile-menu">
+                        <a href="profile.html">My Profile</a>
+                        <a href="#" id="logoutBtn">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Welcome Section -->
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h2 id="userDisplayName">Welcome, User!</h2>
+                    <p id="userEmail">Loading email...</p>
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat">
+                    <div class="stat-value" id="totalOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="totalSpent">$0</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="memberSince">0d</div>
+                    <div class="stat-label">Member Since</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-header">
+            <h1>Quick Actions</h1>
+            <div class="header-actions">
+                <a href="index.html#menu" class="btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Order Food
+                </a>
+                <a href="profile.html" class="btn-secondary">
+                    <i class="fas fa-user"></i> Edit Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="card-title">Recent Order</div>
+                <div class="card-desc" id="lastOrderCard">No orders yet</div>
+                <a href="order-history.html" class="card-link">View All Orders →</a>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="card-title">Loyalty Points</div>
+                <div class="card-value" id="loyaltyPoints">0</div>
+                <div class="card-desc">Earn 1 point per $1 spent</div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="card-title">Delivery Address</div>
+                <div class="card-desc" id="deliveryAddr">No address saved</div>
+                <a href="profile.html" class="card-link">Update Address →</a>
+            </div>
+        </div>
+
+        <!-- Recent Orders Section -->
+        <h2 class="section-title">Recent Orders</h2>
+        <div class="orders-container" id="recentOrdersContainer">
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No orders yet. <a href="index.html#menu" style="color: #FF6B35;">Start ordering now!</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-storage.js"></script>
+
+    <!-- Config and Main Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

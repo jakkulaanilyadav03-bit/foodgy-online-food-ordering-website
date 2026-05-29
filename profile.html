@@ -9,37 +9,53 @@
 </head>
 <body>
 
+<!-- Header with Navigation -->
+<header style="background: rgba(22, 22, 22, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.08); position: sticky; top: 0; z-index: 100;">
+    <nav class="navbar flex between wrapper">
+        <a href="index.html" class="logo" style="color: #f5f5f5; font-size: 1.5rem; font-weight: 700; text-decoration: none;">Foodgy.</a>
+        <ul class="navlist flex gap-3" style="list-style: none; display: flex; gap: 1rem;">
+            <li><a href="index.html" style="color: #a0a0a0; text-decoration: none;">Home</a></li>
+            <li><a href="dashboard.html" style="color: #a0a0a0; text-decoration: none;">Dashboard</a></li>
+            <li><a href="order-history.html" style="color: #a0a0a0; text-decoration: none;">Orders</a></li>
+            <li><a href="profile.html" style="color: #FF6B35; text-decoration: none; font-weight: 600;">Profile</a></li>
+        </ul>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <div id="profileDropdown" class="profile-dropdown" style="position: relative;">
+                <button id="profileBtn" class="btn profile-btn" style="background: transparent; border: none; color: #f5f5f5; cursor: pointer; font-weight: 600;">
+                    User <i class="fa-solid fa-caret-down"></i>
+                </button>
+                <div class="profile-menu" style="display: none; position: absolute; top: 100%; right: 0; background: #161616; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; min-width: 150px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <a href="profile.html" style="display: block; padding: 10px 15px; color: #f5f5f5; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">My Profile</a>
+                    <a href="#" id="logoutBtn" style="display: block; padding: 10px 15px; color: #f5f5f5; text-decoration: none;">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
 
 <div class="profile-container">
 <h2>My Profile</h2>
 
-
 <div class="profile-card">
-
 
 <!-- Profile Image Upload -->
 <div class="photo-section">
-<img id="profileImage" src="default-avatar.png">
+<img id="profileImage" src="https://i.pravatar.cc/150?img=12" alt="Profile">
 <input type="file" id="uploadPhoto" accept="image/*">
 </div>
 
-
 <div class="profile-info">
 <label>Full Name</label>
-<input id="p_name" type="text">
-
+<input id="p_name" type="text" placeholder="Enter your name">
 
 <label>Email</label>
-<input id="p_email" type="email">
-
+<input id="p_email" type="email" placeholder="your@email.com" disabled>
 
 <label>Phone</label>
-<input id="p_phone" type="text">
-
+<input id="p_phone" type="text" placeholder="Your phone number">
 
 <label>Address</label>
-<textarea id="p_address"></textarea>
-
+<textarea id="p_address" placeholder="Enter your delivery address"></textarea>
 
 <label>Gender</label>
 <select id="p_gender">
@@ -49,29 +65,23 @@
 <option>Other</option>
 </select>
 
-
 <label>Date of Birth</label>
 <input type="date" id="p_dob">
 
-
 <label>Bio</label>
-<textarea id="p_bio"></textarea>
-
+<textarea id="p_bio" placeholder="Tell us about yourself"></textarea>
 
 <div class="btn-row">
 <button id="saveProfile" class="primary-btn">Save Changes</button>
 <button id="deleteAccount" class="danger-btn">Delete Account</button>
 </div>
 
-
 <button id="goBack" class="back-btn">← Back</button>
 </div>
 </div>
 
-
 <h3>Your Orders</h3>
 <div id="orderHistory" class="order-list"></div>
-
 
 <h3>Security</h3>
 <div class="security-box">
@@ -79,12 +89,18 @@
 <button id="changePass" class="primary-btn">Change Password</button>
 </div>
 
-
 <h3>Theme Mode</h3>
 <button id="toggleTheme" class="primary-btn">Toggle Dark Mode</button>
 </div>
 
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-storage.js"></script>
 
+<!-- Config and Profile Scripts -->
+<script src="firebase-config.js"></script>
 <script src="profile.js"></script>
 </body>
 </html>

@@ -1,99 +1,98 @@
 [
     {
-        "id":1,
-        "name":" Double Patty Burger",
-        "price":"$14",
-        "image":"images/buger.jpg"
+        "id": 1,
+        "name": "Double Patty Burger",
+        "price": "$14",
+        "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80"
     },
     {
-"id":2, 
-"name": "Sandwich",
-"price" :"$12",
-"image" :"images/sandwich.jpg"
-},
-{
-"id":3, 
-"name": "Pasta",
-"price" :"$10",
-"image" :"images/pasta.jpg"
-},
-{
-"id":4, 
-"name": "Lasagna",
-"price" :"$18",
-"image" :"images/lasagna.webp"
-},
-{
-    "id":5,
-    "name":" Grill Sandwich",
-    "price":"$12",
-    "image":"images/sandwich.png"
-},
-{
-"id":6, 
-"name": "Cheese Pizza",
-"price" :"$18",
-"image" :"images/pizza.png"
-},
-{
-"id":7, 
-"name": "Spring-roll",
-"price" :"$12",
-"image" :"images/spring-roll.png"
-},
-{
-"id":8, 
-"name": "Spaghetti",
-"price" :"$10",
-"image" :"images/spaghetti.png"
-},
-{
-"id":9, 
-"name": "Hot dog",
-"price" :"$10",
-"image" :"images/Hot_dog.jpg"
-},
-{
-"id":10, 
-"name": "Pizza",
-"price" :"$16",
-"image" :"images/pizza.jpg"
-},
-{
-    "id":11,
-    "name":"Chocklate-Drink",
-    "price":"$10",
-    "image":"images/chocolate_Drink.jpg"
-},
-
-{
-    "id":12,
-    "name":"Briyani",
-    "price":"$12",
-    "image":"images/biryani.webp"
-},
-{
-    "id":13,
-    "name":"Cake",
-    "price":"$20",
-    "image":"images/cake.jpg"
-},
-{
-    "id":14,
-    "name":"Spanchi",
-    "price":"$10",
-    "image":"images/Spanchi.jpg"
-},
-{
-    "id":15,
-    "name":"Ice Creme",
-    "price":"$12",
-    "image":"images/ice_cream.jpg"
-},
-{
-    "id":16,
-    "name":"Juse",
-    "price":"$10",
-    "image":"images/juse.jpg"
-}
+        "id": 2, 
+        "name": "Sandwich",
+        "price": "$12",
+        "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=500&q=80"
+    },
+    {
+        "id": 3, 
+        "name": "Pasta",
+        "price": "$10",
+        "image": "https://images.unsplash.com/photo-1621996311239-53929d0e5e92?w=500&q=80"
+    },
+    {
+        "id": 4, 
+        "name": "Lasagna",
+        "price": "$18",
+        "image": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=500&q=80"
+    },
+    {
+        "id": 5,
+        "name": "Grill Sandwich",
+        "price": "$12",
+        "image": "https://images.unsplash.com/photo-1550507992-eb63ffee0847?w=500&q=80"
+    },
+    {
+        "id": 6, 
+        "name": "Cheese Pizza",
+        "price": "$18",
+        "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80"
+    },
+    {
+        "id": 7, 
+        "name": "Spring Roll",
+        "price": "$12",
+        "image": "https://images.unsplash.com/photo-1544025162-8111f4a13243?w=500&q=80"
+    },
+    {
+        "id": 8, 
+        "name": "Spaghetti",
+        "price": "$10",
+        "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500&q=80"
+    },
+    {
+        "id": 9, 
+        "name": "Hot Dog",
+        "price": "$10",
+        "image": "https://images.unsplash.com/photo-1612392062631-94dd858cba88?w=500&q=80"
+    },
+    {
+        "id": 10, 
+        "name": "Pepperoni Pizza",
+        "price": "$16",
+        "image": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=500&q=80"
+    },
+    {
+        "id": 11,
+        "name": "Chocolate Drink",
+        "price": "$10",
+        "image": "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=500&q=80"
+    },
+    {
+        "id": 12,
+        "name": "Biryani",
+        "price": "$12",
+        "image": "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=500&q=80"
+    },
+    {
+        "id": 13,
+        "name": "Chocolate Cake",
+        "price": "$20",
+        "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80"
+    },
+    {
+        "id": 14,
+        "name": "Fruit Salad",
+        "price": "$10",
+        "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80"
+    },
+    {
+        "id": 15,
+        "name": "Ice Cream",
+        "price": "$12",
+        "image": "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=500&q=80"
+    },
+    {
+        "id": 16,
+        "name": "Fresh Juice",
+        "price": "$10",
+        "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&q=80"
+    }
 ]

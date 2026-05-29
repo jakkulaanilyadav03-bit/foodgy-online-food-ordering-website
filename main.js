@@ -1,23 +1,24 @@
 // main.js (replace your existing file with this)
 
 // ---------- DOM ELEMENTS ----------
-const cartIcon = document.querySelector('.cart-icon');
-const cartTab = document.querySelector('.cart-tab');
-const closeBtn = document.querySelector('.close-btn');
-const cardList = document.querySelector('.card-list');
-const cartList = document.querySelector('.cart-list');
-const cartTotal = document.querySelector('.cart-total');
-const cartValue = document.querySelector('.cart-value');
+// ---------- DOM ELEMENTS (will be assigned on DOMContentLoaded) ----------
+let cartIcon = null;
+let cartTab = null;
+let closeBtn = null;
+let cardList = null;
+let cartList = null;
+let cartTotal = null;
+let cartValue = null;
 
-const hamburger = document.querySelector('.hamburger');
-const mobileMenu = document.querySelector('.mobile-menu');
-const bars = document.querySelector('.fa-bars');
+let hamburger = null;
+let mobileMenu = null;
+let bars = null;
 
-const subscribeBtn = document.getElementById('subscribeBtn');
-const emailInput = document.getElementById('email');
+let subscribeBtn = null;
+let emailInput = null;
 
-const signInButtons = document.querySelectorAll('a.btn'); // header and mobile "Sign in" share .btn (we'll detect by text)
-const desktopAction = document.querySelector('.desktop-action');
+let signInButtons = null; // header and mobile "Sign in"
+let desktopAction = null;
 
 // ---------- APP STATE ----------
 let productList = [];
@@ -30,6 +31,27 @@ const STORAGE_SUBSCRIBERS = 'subscribers';
 function q(selector) { return document.querySelector(selector); }
 function formatPrice(n) { return `$${n.toFixed(2)}`; } // used on index page
 function formatINR(n) { return `₹${n.toFixed(2)}`; } // used on order page if needed
+
+// Small debug/banner helper to show product loading status on page
+function showDebugBanner(message, level = 'info') {
+    let banner = document.getElementById('debugBanner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'debugBanner';
+        banner.style.position = 'fixed';
+        banner.style.left = '1rem';
+        banner.style.bottom = '1rem';
+        banner.style.zIndex = 99999;
+        banner.style.padding = '0.6rem 1rem';
+        banner.style.borderRadius = '8px';
+        banner.style.fontSize = '0.95rem';
+        banner.style.boxShadow = '0 6px 18px rgba(0,0,0,0.25)';
+        document.body.appendChild(banner);
+    }
+    banner.textContent = message;
+    banner.style.background = level === 'error' ? '#F87171' : '#10B981';
+    banner.style.color = '#fff';
+}
 
 function showToast(message, type = 'success', duration = 2500) {
     const toast = document.createElement('div');
@@ -64,8 +86,11 @@ function showToast(message, type = 'success', duration = 2500) {
 }
 
 // ---------- RESPONSIVE MENU ----------
-if (hamburger) {
+// ---------- RESPONSIVE MENU ----------
+function bindResponsiveMenu() {
+    if (!hamburger) return;
     hamburger.addEventListener('click', () => {
+        if (!mobileMenu || !bars) return;
         mobileMenu.classList.toggle('mobile-menu-active');
         bars.classList.toggle('fa-xmark');
     });
@@ -180,25 +205,38 @@ function renderCartList() {
 // ---------- SHOW DYNAMIC CARDS ----------
 function showCards() {
     cardList.innerHTML = "";
-    productList.forEach(product => {
+    productList.forEach((product, index) => {
         const card = document.createElement('div');
         card.classList.add('order-card');
+        card.classList.add('reveal');
 
         // price shown as string in product data; convert to number for calculation
         const priceStr = String(product.price || '');
         // strip currency symbols and commas
         const priceNum = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;
 
+        // Generate random rating for display (4-5 stars)
+        const stars = 4 + Math.floor(Math.random() * 2);
+        const starHTML = '<i class="fa-solid fa-star" style="color:#FF6B35;font-size:0.75rem;"></i>'.repeat(stars)
+                       + '<i class="fa-regular fa-star" style="color:#FF6B35;font-size:0.75rem;"></i>'.repeat(5 - stars);
+
         card.innerHTML = `
             <div class="card-image">
-                <img src="${product.image}">
+                <img src="${product.image}" alt="${product.name}" loading="lazy">
             </div>
+            <div style="margin-bottom:0.3rem;">${starHTML}</div>
             <h4>${product.name}</h4>
             <h4 class="price">${product.price}</h4>
             <a href="#" class="btn add-btn">Add to cart</a>
         `;
 
+        // Stagger animation
+        card.style.animationDelay = `${index * 0.05}s`;
+
         cardList.appendChild(card);
+
+        // Trigger reveal
+        setTimeout(() => card.classList.add('active'), 100 + index * 80);
 
         // ADD TO CART BTN
         card.querySelector('.add-btn').addEventListener('click', (e) => {
@@ -244,11 +282,14 @@ async function initApp() {
     try {
         // fetch local file: products.json (same place as your current code)
         const res = await fetch("products.json");
+        if (!res.ok) throw new Error('Failed to fetch products.json: ' + res.status);
         const data = await res.json();
         productList = data;
         showCards();
+        showDebugBanner(`Loaded ${productList.length} products`);
     } catch (err) {
         console.log("Error loading products:", err);
+        showDebugBanner('Error loading products.json — open console for details', 'error');
     }
 }
 
@@ -257,7 +298,8 @@ function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-if (subscribeBtn && emailInput) {
+function bindSubscribe() {
+    if (!subscribeBtn || !emailInput) return;
     subscribeBtn.addEventListener('click', (e) => {
         e.preventDefault();
         const email = emailInput.value.trim();
@@ -353,147 +395,189 @@ modal.remove();
 }
 
 function updateSignInUI() {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_USER_KEY) || 'null');
+    let isAuthenticated = false;
+    let userName = '';
+
+    // Check Firebase first, fallback to localStorage
+    if (typeof auth !== 'undefined' && auth && auth.currentUser) {
+        isAuthenticated = true;
+        userName = auth.currentUser.displayName || auth.currentUser.email.split('@')[0] || 'User';
+    } else {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_USER_KEY) || 'null');
+        if (stored && stored.name) {
+            isAuthenticated = true;
+            userName = stored.name;
+        }
+    }
+
     // find header sign-in button (the desktop one is inside .desktop-action and had .btn; mobile also)
     const desktopBtn = document.querySelector('.desktop-action a.btn');
     const mobileBtn = document.querySelector('.mobile-menu a.btn');
 
-    if (stored && stored.name) {
-        const shortName = stored.name.split(' ')[0];
+    if (isAuthenticated) {
+        const shortName = userName.split(' ')[0];
         if (desktopBtn) {
             desktopBtn.innerHTML = `${shortName} &nbsp; <i class="fa-solid fa-user"></i>`;
             desktopBtn.classList.add('signed-in');
-            desktopBtn.href = '#'; // could link to profile
+            desktopBtn.href = 'profile.html'; // Link to profile page
         }
         if (mobileBtn) {
             mobileBtn.innerHTML = `${shortName} &nbsp; <i class="fa-solid fa-user"></i>`;
+            mobileBtn.classList.add('signed-in');
+            mobileBtn.href = 'profile.html';
         }
+        // show dashboard/order links
+        const navDash = document.getElementById('navDashboardLink');
+        const navOrders = document.getElementById('navOrdersLink');
+        const mNavDash = document.getElementById('mobileDashboardLink');
+        const mNavOrders = document.getElementById('mobileOrdersLink');
+        if (navDash) navDash.style.display = 'inline-block';
+        if (navOrders) navOrders.style.display = 'inline-block';
+        if (mNavDash) mNavDash.style.display = 'block';
+        if (mNavOrders) mNavOrders.style.display = 'block';
     } else {
         if (desktopBtn) desktopBtn.innerHTML = `Sign in &nbsp; <i class="fa-solid fa-arrow-right-from-bracket"></i>`;
         if (mobileBtn) mobileBtn.innerHTML = `Sign in &nbsp; <i class="fa-solid fa-arrow-right-from-bracket"></i>`;
+        if (desktopBtn) desktopBtn.classList.remove('signed-in');
+        if (mobileBtn) mobileBtn.classList.remove('signed-in');
+        // hide dashboard/order links
+        const navDash = document.getElementById('navDashboardLink');
+        const navOrders = document.getElementById('navOrdersLink');
+        const mNavDash = document.getElementById('mobileDashboardLink');
+        const mNavOrders = document.getElementById('mobileOrdersLink');
+        if (navDash) navDash.style.display = 'none';
+        if (navOrders) navOrders.style.display = 'none';
+        if (mNavDash) mNavDash.style.display = 'none';
+        if (mNavOrders) mNavOrders.style.display = 'none';
     }
 }
 
+// Alias for compatibility
+function updateUserUI() {
+    updateSignInUI();
+}
+
 function initSignInHandlers() {
-    // desktop and mobile sign in are .btn elements with that text
     const desktopBtn = document.querySelector('.desktop-action a.btn');
     const mobileBtn = document.querySelector('.mobile-menu a.btn');
 
     if (desktopBtn) {
         desktopBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // open modal
-            createSignInModal();
+            // if signed-in, follow the link (profile), otherwise open modal
+            if (desktopBtn.classList.contains('signed-in') || desktopBtn.href.includes('profile.html')) {
+                window.location.href = desktopBtn.href;
+                return;
+            }
+            
+            const fbModal = document.getElementById('authModal');
+            if (fbModal) {
+                fbModal.style.display = 'flex';
+            } else {
+                createSignInModal();
+            }
         });
     }
 
     if (mobileBtn) {
         mobileBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            createSignInModal();
-            // close mobile menu to show modal clearly
-            if (mobileMenu.classList.contains('mobile-menu-active')) {
+            // if signed-in, follow the link (profile), otherwise open modal
+            if (mobileBtn.classList.contains('signed-in') || mobileBtn.href.includes('profile.html')) {
+                window.location.href = mobileBtn.href;
+                if (mobileMenu && mobileMenu.classList.contains('mobile-menu-active')) {
+                    mobileMenu.classList.remove('mobile-menu-active');
+                    if (bars) bars.classList.remove('fa-xmark');
+                }
+                return;
+            }
+            
+            const fbModal = document.getElementById('authModal');
+            if (fbModal) {
+                fbModal.style.display = 'flex';
+            } else {
+                createSignInModal();
+            }
+            
+            if (mobileMenu && mobileMenu.classList.contains('mobile-menu-active')) {
                 mobileMenu.classList.remove('mobile-menu-active');
-                bars.classList.remove('fa-xmark');
+                if (bars) bars.classList.remove('fa-xmark');
             }
         });
     }
 }
 
 // ---------- CHECKOUT (go to order.html) ----------
-const checkoutBtn = document.querySelector('.checkout-btn');
-if (checkoutBtn) {
+function bindCheckout() {
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    if (!checkoutBtn) return;
     checkoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         if (!cartProducts || cartProducts.length === 0) {
             showToast("Cart is empty!", "error");
             return;
         }
-        // save cart to localStorage (order page will read it)
         saveCart();
-        // ensure user's email saved if subscribed
-        // redirect to order page where the order will be finalized
         window.location.href = 'order.html';
     });
 }
 
 // ---------- CART TAB OPEN / CLOSE ----------
-if (cartIcon) {
-    cartIcon.addEventListener('click', (e) => {
-        e.preventDefault();
-        cartTab.classList.add('cart-tab-active');
-          document.body.classList.add('cart-open');
-    });
-}
-if (closeBtn) {
-    closeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        cartTab.classList.remove('cart-tab-active');
-          document.body.classList.remove('cart-open');
-    });
-}
-
-// ---------- INIT ----------
-updateSignInUI();
-initSignInHandlers();
-loadCart();
-initApp(); // load products
-
-
-
-
-
-
-
-
-
-
-// ---------- NEW: UPDATE NAVBAR UI ----------
-
-function updateUserUI() {
-    const user = JSON.parse(localStorage.getItem(STORAGE_USER_KEY) || "null");
-
-    // Desktop elements
-    const signInBtn = document.getElementById("mobileSignInBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
-    const profileBtn = document.getElementById("profileBtn");
-
-    if (user && user.name) {
-        // Hide Sign-In button
-        if (signInBtn) signInBtn.style.display = "none";
-
-        // Show profile dropdown
-        if (profileDropdown) profileDropdown.style.display = "block";
-
-        // Show username
-        if (profileBtn) {
-            profileBtn.innerHTML = `${user.name.split(" ")[0]} <i class="fa-solid fa-caret-down"></i>`;
-        }
-
-    } else {
-        // Show Sign-In button
-        if (signInBtn) signInBtn.style.display = "inline-block";
-
-        // Hide profile dropdown
-        if (profileDropdown) profileDropdown.style.display = "none";
+function bindCartTab() {
+    if (cartIcon) {
+        cartIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (cartTab) cartTab.classList.add('cart-tab-active');
+            document.body.classList.add('cart-open');
+        });
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (cartTab) cartTab.classList.remove('cart-tab-active');
+            document.body.classList.remove('cart-open');
+        });
     }
 }
 
+// Initialize DOM-dependent bindings after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // assign DOM elements
+    cartIcon = document.querySelector('.cart-icon');
+    cartTab = document.querySelector('.cart-tab');
+    closeBtn = document.querySelector('.close-btn');
+    cardList = document.querySelector('.card-list');
+    cartList = document.querySelector('.cart-list');
+    cartTotal = document.querySelector('.cart-total');
+    cartValue = document.querySelector('.cart-value');
+
+    hamburger = document.querySelector('.hamburger');
+    mobileMenu = document.querySelector('.mobile-menu');
+    bars = document.querySelector('.fa-bars');
+
+    subscribeBtn = document.getElementById('subscribeBtn');
+    emailInput = document.getElementById('email');
+
+    desktopAction = document.querySelector('.desktop-action');
+    signInButtons = document.querySelectorAll('a.btn');
+
+    // bind handlers
+    bindResponsiveMenu();
+    bindSubscribe();
+    initSignInHandlers();
+    bindCheckout();
+    bindCartTab();
+
+    // load saved cart and products
+    loadCart();
+    updateSignInUI();
+    initApp();
+});
 
 
-// ---------- NEW: LOGOUT ----------
-const logoutBtn = document.getElementById("logoutBtn");
-
-if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.removeItem(STORAGE_USER_KEY);
-        showToast("Logged out successfully!", "success");
-        updateUserUI();
-    });
-}
 
 
-document.addEventListener("DOMContentLoaded", updateUserUI);
+
+
 
 
