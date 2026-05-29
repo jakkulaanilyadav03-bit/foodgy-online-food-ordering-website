@@ -1,2 +1,6 @@
 # Ignore private team images
 images/
+
+FIREBASE_SETUP.md
+IMPLEMENTATION_SUMMARY.md
+QUICK_START.md
